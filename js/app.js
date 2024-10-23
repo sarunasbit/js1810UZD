@@ -265,11 +265,11 @@ function runAllBooks(){
 }
 //Show Price, Quantity price....
 function runInventoryValue(){
-    //Book quantity price
+//Book quantity price
     function bookQuantityValue(book){
         return book.price * book.quantity;
     }
-    //Category value
+//Category value
     function booksCategoryValue(category){
         let sumOfCategoryValue = 0;
         for(let book of category.books){
@@ -277,7 +277,7 @@ function runInventoryValue(){
         }
         return sumOfCategoryValue;
     }
-    //Inventory value
+//Inventory value
     function booksInventoryValue(inventory){
     let sumOfInventoryValue = 0;
         for(let category of inventory){
@@ -287,7 +287,7 @@ function runInventoryValue(){
     }
 
     
-    //Loop to get prices and display
+//Loop to get prices and display
     for(let category of inventory) {
         consoleLogCategoryName(category)
             for(let book of category.books){
@@ -327,13 +327,13 @@ function filterBooksByCategoryPages(inventory, filterByInput) {
         console.log(`Book price: ${book.price}`)
         console.log("----------------------")
     };
-    //Filter and check if category #filterByInput
+//Filter and check if category #filterByInput
     function categoryFilterOnly(category) {
         for(let book of category.books){
             templateConsoleLog(book)
         }
     };
-    //Filters and checks by title and pages first If Titles, second If Pages
+//Filters and checks by title and pages first If Titles, second If Pages
     function pagesAndTitleFilterOnly (category){
         for(let book of category.books){
             if(book.title === filterByInput){
@@ -346,7 +346,7 @@ function filterBooksByCategoryPages(inventory, filterByInput) {
             }
         }
     }
-    //Loop for to start filter 
+//Loop for to start filter 
     for(let category of inventory){
         if(category.category === filterByInput){
             console.log(`Category: ${category.category}`)
