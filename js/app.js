@@ -229,80 +229,208 @@ const inventory = [
     }
 ]
 
-function consoleLogCategoryName(categorys){
+function consoleLogCategoryName(category){
     console.log("<-----CATEGORY------>")
-    console.log(categorys.category.toUpperCase())
+    console.log(category.category.toUpperCase())
     console.log("<------------------->")
 }
 
-function markNewBooks(key) {
-    for(let books of key){
-        for(let item in books){
-            if(item === 'publishing_year' && books[item] >= 2020){
-                console.log(`${item}: ${books[item]} #NEW BOOK`)
-                continue
-            }
-         console.log(item + ": " + books[item])     
-        }
-    console.log('--------------------------------')
-    }
-}
-
-
-
 //New books marking
-function runBooks(){
-    for(let categorys of inventory){
-        consoleLogCategoryName(categorys)
-        for(let key in categorys){
+function runAllBooks(){
+    
+    //Mark books ant display
+    function markNewBooks(key) {
+        for(let book of key){
+            for(let item in book){
+                if(item === 'publishing_year' && book[item] >= 2020){
+                    console.log(`${item}: ${book[item]} #NEW BOOK`)
+                    continue
+                }
+             console.log(item + ": " + book[item])     
+            }
+        console.log('--------------------------------')
+        }
+    }
+
+    //run loop 
+    for(let category of inventory){
+        consoleLogCategoryName(category)
+        for(let key in category){
             if(key === 'books'){
-                markNewBooks(categorys[key]);
+                 markNewBooks(category[key]);
             }
         }
     }
+
 }
+//Show Price, Quantity price....
+function runInventoryValue(){
+    //Book quantity price
+    function bookQuantityValue(book){
+        return book.price * book.quantity;
+    }
+    //Category value
+    function booksCategoryValue(category){
+        let sumOfCategoryValue = 0;
+        for(let book of category.books){
+            sumOfCategoryValue += bookQuantityValue(book);
+        }
+        return sumOfCategoryValue;
+    }
+    //Inventory value
+    function booksInventoryValue(inventory){
+    let sumOfInventoryValue = 0;
+        for(let category of inventory){
+            sumOfInventoryValue += booksCategoryValue(category);
+        }
+    return sumOfInventoryValue;
+    }
 
-
-function bookQuantityValue(book){
-    return book.price * book.quantity;
-}
-
-
-
-function inventoryValue(){
-    let sumOfInventory = 0;
-
-    for(let categorys of inventory) {
-        let sumOfCategory = 0;
-        consoleLogCategoryName(categorys)
-            for(let book of categorys.books){
+    
+    //Loop to get prices and display
+    for(let category of inventory) {
+        consoleLogCategoryName(category)
+            for(let book of category.books){
                 console.log("For the book: " + book.title)
                 console.log(`Price: ${book.price} EUR`)
                 console.log("Quantity: " + book.quantity)
-                const sumOfBooks = bookQuantityValue(book);
-                console.log(`Total value: ${book.price} * ${book.quantity} = ${sumOfBooks.toFixed(2)} EUR`)
-                sumOfCategory += sumOfBooks;
+                console.log(`Total value: ${book.price} * ${book.quantity} = ${bookQuantityValue(book).toFixed(2)} EUR`)
                 console.log("------------------------")
             }
-        sumOfInventory += sumOfCategory;
-        console.log(`Total sum of category: ${sumOfCategory.toFixed(2)} EUR` )
+        console.log(`Total sum of category: ${booksCategoryValue(category).toFixed(2)} EUR` )
         console.log("<<------------->>")
+        
     }
-    console.log(`Inventory value: ${sumOfInventory.toFixed(2)} EUR`)
-
+    console.log(`Total sum of inventory: ${booksInventoryValue(inventory).toFixed(2)} EUR`)
 }
 
-runBooks();
+//Templates for console output
+function templateConsoleLog(book){
+    console.log(`Book title: ${book.title}`)
+    console.log(`Book ISBN: ${book.ISBN}`)
+    console.log(`Book publishing year: ${book.publishing_year}`)
+    console.log(`Book pages: ${book.pages}`)
+    console.log(`Book quantity: ${book.quantity}`)
+    console.log(`Book price: ${book.price}`)
+    console.log("----------------------")
+}
 
-inventoryValue();
+//Filter books by Category, Pages, Title 
+function filterBooksByCategoryPages(inventory, filterByInput) {
+    
+    function templateConsoleLog(book){
+        console.log(`Book title: ${book.title}`)
+        console.log(`Book ISBN: ${book.ISBN}`)
+        console.log(`Book publishing year: ${book.publishing_year}`)
+        console.log(`Book pages: ${book.pages}`)
+        console.log(`Book quantity: ${book.quantity}`)
+        console.log(`Book price: ${book.price}`)
+        console.log("----------------------")
+    };
+    //Filter and check if category #filterByInput
+    function categoryFilterOnly(category) {
+        for(let book of category.books){
+            templateConsoleLog(book)
+        }
+    };
+    //Filters and checks by title and pages first If Titles, second If Pages
+    function pagesAndTitleFilterOnly (category){
+        for(let book of category.books){
+            if(book.title === filterByInput){
+                templateConsoleLog(book)   
+            }
+            if(book.pages === filterByInput){
+                console.log(`Category: ${category.category}`)
+                templateConsoleLog(book)
+                
+            }
+        }
+    }
+    //Loop for to start filter 
+    for(let category of inventory){
+        if(category.category === filterByInput){
+            console.log(`Category: ${category.category}`)
+            categoryFilterOnly(category)
+        }else {
+            pagesAndTitleFilterOnly(category)
+        }  
+    };
+}
+
+
+//Book prices max or min values "min" or "max"
+function minOrMaxBookPrice(inventory, value){
+    if(value === "min"){
+        const prices = inventory.flatMap(category => category.books.map(book => book.price));
+        return console.log(Math.min(...prices))
+    }else if(value === "max"){
+        const prices = inventory.flatMap(category => category.books.map(book => book.price));
+        return console.log(Math.max(...prices))
+    }
+}
+//Price sort
+function sortBooksAsc(inventory){
+    for(let category of inventory){
+        category.books.sort((a,b)=> a.price-b.price)
+
+        for(let book of category.books){
+            console.log(`Categories ${category.category}`)
+            templateConsoleLog(book)
+        }
+    }
+}
+//Price sort
+function sortBooksDesc(inventory){
+    for(let category of inventory){
+        category.books.sort((a,b)=> b.price-a.price)
+        for(let book of category.books){
+            console.log(`Categories ${category.category}`)
+            templateConsoleLog(book)
+        }
+    }
+}
+
+//Title sort
+function sortBooksByTitleAsc(inventory){
+    for(let category of inventory){
+        category.books.sort((a,b)=> a.title<b.title)
+
+        for(let book of category.books){
+            console.log(`Categories ${category.category}`)
+            templateConsoleLog(book)
+        }
+    }
+}
+//Title sort
+function sortBooksByTitleDesc(inventory){
+    for(let category of inventory){
+        category.books.sort((a,b)=> a.title>b.title)
+        for(let book of category.books){
+            console.log(`Categories ${category.category}`)
+            templateConsoleLog(book)
+        }
+    }
+}
+
+
+// runAllBooks()
+// runInventoryValue()
 
 
 
 
 
+// filterBooksByCategoryPages(inventory, "Fantastika")
+// filterBooksByCategoryPages(inventory, 280)
+// runInventoryValue()
+// runAllBooks()
+// minOrMaxBookPrice(inventory, "min")
 
+// sortBooksAsc(inventory);
+// sortBooksDesc(inventory);
 
-
+// sortBooksByTitleDesc(inventory)
+// sortBooksByTitleAsc(inventory)
 
 
 
